@@ -6,11 +6,35 @@ HTML = '''
 <!doctype html>
 <html lang="{{ lang }}">
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>{{ 'Kalorien- & BMI-Rechner' if lang == 'de' else 'Calorie & BMI Calculator' }}</title>
-  <meta name="description" content="Nutze unseren kostenlosen Kalorien- und BMI-Rechner, um dein Gewicht zu kontrollieren, dein Fitnessziel zu erreichen und gesund zu bleiben. Schnell, einfach & zuverlässig!">
+
+  <title>{{ 'Kalorien- & BMI-Rechner für Ernährung & Gesundheit' if lang == 'de' else 'Calorie & BMI Calculator for Nutrition & Health' }}</title>
+
+  <meta name="description" content="{{ 'Kostenloser Kalorienrechner mit BMI-Berechnung und Makronährstoffen. Ideal für Diät, Fitness oder Muskelaufbau – jetzt ausprobieren!' if lang == 'de' else 'Free calorie calculator with BMI and macronutrient calculation. Perfect for diet, fitness or muscle gain – try now!' }}" />
+  <meta name="keywords" content="{{ 'Kalorienrechner, BMI Rechner, Ernährung, Diät, Makronährstoffe, Gesundheit, Gewicht verlieren, Fitness' if lang == 'de' else 'calorie calculator, BMI calculator, nutrition, diet, macronutrients, health, weight loss, fitness' }}" />
+  <meta name="author" content="Gabriel Rodriguez" />
+  <meta name="robots" content="index, follow" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:title" content="{{ 'Kalorienrechner & BMI-Tool' if lang == 'de' else 'Calorie & BMI Tool' }}" />
+  <meta property="og:description" content="{{ 'Berechne deinen täglichen Kalorienbedarf, BMI und Makronährstoffe. Unterstützt Deutsch & Englisch, Dark/Light Mode & responsives Design.' if lang == 'de' else 'Calculate your daily calories, BMI & macros. Supports English & German, dark/light mode & responsive design.' }}" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://kalorienrechner.onrender.com" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="{{ 'Kalorienrechner & BMI-Tool' if lang == 'de' else 'Calorie & BMI Tool' }}" />
+  <meta name="twitter:description" content="{{ 'Berechne Kalorien, BMI und Makros – einfach & schnell!' if lang == 'de' else 'Calculate calories, BMI and macros – fast & easy!' }}" />
+
+  <!-- Sprache -->
+  <meta http-equiv="Content-Language" content="{{ 'de' if lang == 'de' else 'en' }}" />
+
+  <!-- Favicon -->
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+
   <style>
+    /* Styles wie oben, responsiv & dark/light Modus */
     :root {
       --bg-light: #f0f4f8;
       --text-light: #333;
@@ -35,7 +59,6 @@ HTML = '''
       height: 100vh;
       transition: background 0.3s, color 0.3s;
       padding: 10px;
-      box-sizing: border-box;
     }
     body.dark {
       background: var(--bg-dark);
@@ -43,7 +66,7 @@ HTML = '''
     }
     .container {
       background: var(--container-light);
-      padding: 30px 20px;
+      padding: 30px 40px;
       border-radius: 12px;
       box-shadow: 0 8px 20px rgba(0,0,0,0.1);
       max-width: 400px;
@@ -63,12 +86,11 @@ HTML = '''
       text-align: left;
       margin: 12px 0 6px;
       font-weight: 600;
-      font-size: 1rem;
     }
     input[type="number"], select {
       width: 100%;
-      padding: 12px 10px;
-      font-size: 1.1rem;
+      padding: 10px;
+      font-size: 1em;
       margin-bottom: 15px;
       border-radius: 6px;
       border: 1px solid #ccc;
@@ -88,8 +110,8 @@ HTML = '''
       background-color: var(--btn-bg-light);
       color: white;
       font-weight: 700;
-      padding: 14px 20px;
-      font-size: 1.2rem;
+      padding: 12px 20px;
+      font-size: 1.1em;
       border: none;
       border-radius: 8px;
       cursor: pointer;
@@ -124,7 +146,9 @@ HTML = '''
       gap: 12px;
       font-weight: 600;
       flex-wrap: wrap;
-      justify-content: flex-end;
+    }
+    .top-bar form {
+      margin: 0;
     }
     .top-bar button {
       padding: 6px 12px;
@@ -137,13 +161,31 @@ HTML = '''
       font-size: 0.9rem;
     }
     .top-bar button:hover {
-      background-color: var(--btn-bg-hover-light);
+      background: var(--btn-bg-hover-light);
     }
     body.dark .top-bar button {
       background: var(--btn-bg-dark);
     }
     body.dark .top-bar button:hover {
-      background-color: var(--btn-bg-hover-dark);
+      background: var(--btn-bg-hover-dark);
+    }
+    @media (max-width: 480px) {
+      .container {
+        padding: 20px 25px;
+        max-width: 100%;
+      }
+      h1 {
+        font-size: 1.5rem;
+      }
+      input[type="number"], select, input[type="submit"] {
+        font-size: 1rem;
+        padding: 10px;
+      }
+      .top-bar {
+        position: static;
+        justify-content: center;
+        margin-bottom: 15px;
+      }
     }
   </style>
 </head>
@@ -207,7 +249,7 @@ HTML = '''
       </div>
       <div class="result">
         {{ 'Makronährstoffe (g/Tag):' if lang == 'de' else 'Macronutrients (g/day):' }}
-        <br>
+        <br />
         {{ 'Protein:' if lang == 'de' else 'Protein:' }} {{ protein }}g,  
         {{ 'Fett:' if lang == 'de' else 'Fat:' }} {{ fett }}g,  
         {{ 'Kohlenhydrate:' if lang == 'de' else 'Carbohydrates:' }} {{ kohlenhydrate }}g
@@ -271,13 +313,11 @@ def home():
                 kalorien = round(gesamtbedarf)
                 bmi = round(gewicht / ((groesse / 100) ** 2), 1)
                 protein, fett, kohlenhydrate = calculate_macros(kalorien, gewicht)
-
             except Exception:
-                kalorien = bmi = protein = fett = kohlenhydrate = None
+                pass
 
-    return render_template_string(HTML, kalorien=kalorien, bmi=bmi,
-                                  protein=protein, fett=fett, kohlenhydrate=kohlenhydrate,
-                                  theme=theme, lang=lang, form=form)
+    return render_template_string(HTML, theme=theme, lang=lang, form=form, kalorien=kalorien, bmi=bmi, protein=protein, fett=fett, kohlenhydrate=kohlenhydrate)
 
 if __name__ == "__main__":
     app.run(debug=True)
+
