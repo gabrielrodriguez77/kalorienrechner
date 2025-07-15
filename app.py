@@ -7,7 +7,9 @@ HTML = '''
 <html lang="{{ lang }}">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{{ 'Kalorien- & BMI-Rechner' if lang == 'de' else 'Calorie & BMI Calculator' }}</title>
+  <meta name="description" content="Nutze unseren kostenlosen Kalorien- und BMI-Rechner, um dein Gewicht zu kontrollieren, dein Fitnessziel zu erreichen und gesund zu bleiben. Schnell, einfach & zuverlässig!">
   <style>
     :root {
       --bg-light: #f0f4f8;
@@ -32,6 +34,8 @@ HTML = '''
       align-items: center;
       height: 100vh;
       transition: background 0.3s, color 0.3s;
+      padding: 10px;
+      box-sizing: border-box;
     }
     body.dark {
       background: var(--bg-dark);
@@ -39,7 +43,7 @@ HTML = '''
     }
     .container {
       background: var(--container-light);
-      padding: 30px 40px;
+      padding: 30px 20px;
       border-radius: 12px;
       box-shadow: 0 8px 20px rgba(0,0,0,0.1);
       max-width: 400px;
@@ -52,21 +56,24 @@ HTML = '''
     }
     h1 {
       margin-bottom: 20px;
+      font-size: 1.8rem;
     }
     label {
       display: block;
       text-align: left;
       margin: 12px 0 6px;
       font-weight: 600;
+      font-size: 1rem;
     }
     input[type="number"], select {
       width: 100%;
-      padding: 8px 10px;
-      font-size: 1em;
+      padding: 12px 10px;
+      font-size: 1.1rem;
       margin-bottom: 15px;
       border-radius: 6px;
       border: 1px solid #ccc;
       transition: border-color 0.3s;
+      box-sizing: border-box;
     }
     input[type="number"]:focus, select:focus {
       outline: none;
@@ -81,8 +88,8 @@ HTML = '''
       background-color: var(--btn-bg-light);
       color: white;
       font-weight: 700;
-      padding: 12px 20px;
-      font-size: 1.1em;
+      padding: 14px 20px;
+      font-size: 1.2rem;
       border: none;
       border-radius: 8px;
       cursor: pointer;
@@ -104,6 +111,7 @@ HTML = '''
       font-size: 1.3em;
       font-weight: 700;
       color: var(--btn-bg-light);
+      word-wrap: break-word;
     }
     body.dark .result {
       color: var(--btn-bg-dark);
@@ -115,6 +123,8 @@ HTML = '''
       display: flex;
       gap: 12px;
       font-weight: 600;
+      flex-wrap: wrap;
+      justify-content: flex-end;
     }
     .top-bar button {
       padding: 6px 12px;
@@ -124,15 +134,16 @@ HTML = '''
       background: var(--btn-bg-light);
       color: white;
       transition: background-color 0.3s;
+      font-size: 0.9rem;
     }
     .top-bar button:hover {
-      background: var(--btn-bg-hover-light);
+      background-color: var(--btn-bg-hover-light);
     }
     body.dark .top-bar button {
       background: var(--btn-bg-dark);
     }
     body.dark .top-bar button:hover {
-      background: var(--btn-bg-hover-dark);
+      background-color: var(--btn-bg-hover-dark);
     }
   </style>
 </head>
@@ -181,7 +192,7 @@ HTML = '''
       <select id="ziel" name="ziel" required>
         <option value="abnehmen" {% if form.ziel == 'abnehmen' %}selected{% endif %}>{{ 'Abnehmen (-300 kcal)' if lang == 'de' else 'Lose weight (-300 kcal)' }}</option>
         <option value="halten" {% if form.ziel == 'halten' %}selected{% endif %}>{{ 'Gewicht halten' if lang == 'de' else 'Maintain weight' }}</option>
-        <option value="zunehmen" {% if form.zunehmen == 'zunehmen' %}selected{% endif %}>{{ 'Zunehmen (+300 kcal)' if lang == 'de' else 'Gain weight (+300 kcal)' }}</option>
+        <option value="zunehmen" {% if form.ziel == 'zunehmen' %}selected{% endif %}>{{ 'Zunehmen (+300 kcal)' if lang == 'de' else 'Gain weight (+300 kcal)' }}</option>
       </select>
 
       <input type="submit" value="{{ 'Berechnen' if lang == 'de' else 'Calculate' }}">
@@ -203,16 +214,11 @@ HTML = '''
       </div>
     {% endif %}
   </div>
-
-  <script>
-    // Dark mode toggle handled by server, but can enhance here if needed
-  </script>
 </body>
 </html>
 '''
 
 def calculate_macros(calories, weight):
-    # Faustregel Makros: Protein 2g/kg, Fett 1g/kg, Kohlenhydrate restliche kcal
     protein = round(weight * 2)
     fett = round(weight * 1)
     rest_kcal = calories - (protein * 4 + fett * 9)
@@ -229,11 +235,9 @@ def home():
     protein = fett = kohlenhydrate = None
 
     if request.method == "POST":
-        # Sprache & Theme aus versteckten Feldern
         theme = request.form.get('theme', 'light')
         lang = request.form.get('lang', 'de')
 
-        # Formulardaten
         form['geschlecht'] = request.form.get('geschlecht')
         form['alter'] = request.form.get('alter')
         form['gewicht'] = request.form.get('gewicht')
@@ -250,13 +254,12 @@ def home():
                 aktivitaet = float(form['aktivitaet'])
                 ziel = form['ziel']
 
-                # Grundumsatz Harris-Benedict (vereinfacht)
                 if geschlecht == 'm':
                     grundumsatz = 66 + (13.7 * gewicht) + (5 * groesse) - (6.8 * alter)
                 elif geschlecht == 'w':
                     grundumsatz = 655 + (9.6 * gewicht) + (1.8 * groesse) - (4.7 * alter)
                 else:
-                    grundumsatz = 1500  # Durchschnittswert
+                    grundumsatz = 1500
 
                 gesamtbedarf = grundumsatz * aktivitaet
 
@@ -266,11 +269,7 @@ def home():
                     gesamtbedarf += 300
 
                 kalorien = round(gesamtbedarf)
-
-                # BMI berechnen
                 bmi = round(gewicht / ((groesse / 100) ** 2), 1)
-
-                # Makros berechnen
                 protein, fett, kohlenhydrate = calculate_macros(kalorien, gewicht)
 
             except Exception:
@@ -282,4 +281,3 @@ def home():
 
 if __name__ == "__main__":
     app.run(debug=True)
-
